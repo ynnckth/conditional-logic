@@ -18,5 +18,7 @@ describe('evaluateExpression', () => {
     // Disabling type check, as we won't have control over the types at runtime
     // @ts-ignore
     expect(() => {evaluateExpression(expression, {age: undefined})}).toThrow('ValidationError');
+    // @ts-ignore
+    expect(() => {evaluateExpression(expression, {age: null})}).toThrow('ValidationError');
   });
 });
