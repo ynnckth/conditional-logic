@@ -16,6 +16,10 @@ export const App = () => {
 
   return (
     <div style={{margin: 50}}>
+      <h4>Input variable map</h4>
+      <pre style={{whiteSpace: "pre-wrap"}}>{JSON.stringify(variableMap)}</pre>
+
+      <h4>Conditional expression</h4>
       <QueryBuilder
         fields={Object.keys(variableMap).map(variableKey => ({
           name: variableKey,
@@ -26,12 +30,17 @@ export const App = () => {
         operators={supportedOperators}
       />
 
-      <h4>Query</h4>
+      <h4>Constructed query</h4>
       {query && (
         <div>
           <pre style={{whiteSpace: "pre-wrap"}}>{JSON.stringify(formatQuery(query, 'jsonlogic'))}</pre>
           <button onClick={() => evaluate()}>Evaluate</button>
-          <div style={{marginTop: 25}}>{`Evaluation result: ${evaluationResult}`}</div>
+          {evaluationResult !== undefined && (
+            <>
+              <h4>Evaluation result</h4>
+              <pre>{JSON.stringify(evaluationResult)}</pre>
+            </>
+          )}
         </div>
       )}
     </div>
