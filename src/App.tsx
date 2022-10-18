@@ -1,47 +1,37 @@
 import React, {useState} from 'react';
 import QueryBuilder, {formatQuery, RuleGroupType} from 'react-querybuilder';
-import jsonLogic from 'json-logic-js';
-
-// This is our variable map including the stored values
-const variableMap: Record<string, number | string> = {
-  age: 20,
-  gender: 'male',
-};
-
-// Example expression: {"and":[{">=":[{"var":"age"},"18"]},{"==":[{"var":"gender"},"female"]}]}
-const getJsonLogicExpressionForRuleGroup = (ruleGroup: RuleGroupType) =>
-  formatQuery(ruleGroup, 'jsonlogic');
+import 'react-querybuilder/dist/query-builder.scss';
+import {evaluateExpression, supportedOperators} from './evaluateExpression';
+import {variableMap} from './variableMap';
 
 export const App = () => {
   const [query, setQuery] = useState<RuleGroupType>();
   const [evaluationResult, setEvaluationResult] = useState<boolean>();
 
-  const evaluateExpression = () => {
+  const evaluate = () => {
     if (!query) return;
-    setEvaluationResult(
-      jsonLogic.apply(getJsonLogicExpressionForRuleGroup(query), variableMap)
-    );
-  };
+    const result = evaluateExpression(formatQuery(query, 'jsonlogic'), variableMap);
+    setEvaluationResult(result);
+  }
 
   return (
-    <div>
+    <div style={{margin: 50}}>
       <QueryBuilder
         fields={Object.keys(variableMap).map(variableKey => ({
           name: variableKey,
           label: variableKey,
         }))}
-        query={query}
-        onQueryChange={q => setQuery(q)}
+        defaultQuery={query}
+        onQueryChange={(q) => setQuery(q)}
+        operators={supportedOperators}
       />
 
       <h4>Query</h4>
       {query && (
         <div>
-          <pre>{JSON.stringify(getJsonLogicExpressionForRuleGroup(query))}</pre>
-          <button onClick={() => evaluateExpression()}>Evaluate</button>
-          <br />
-          <br />
-          <div>{`Evaluation result: ${evaluationResult}`}</div>
+          <pre style={{whiteSpace: "pre-wrap"}}>{JSON.stringify(formatQuery(query, 'jsonlogic'))}</pre>
+          <button onClick={() => evaluate()}>Evaluate</button>
+          <div style={{marginTop: 25}}>{`Evaluation result: ${evaluationResult}`}</div>
         </div>
       )}
     </div>
